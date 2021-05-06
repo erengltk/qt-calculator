@@ -6,6 +6,7 @@
 #include <QAbstractButton>
 #include<iostream>
 double firstNumber;
+bool arti=false,eksi=false,carpi=false,bolme=false,userIsTyping=false;
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -46,24 +47,34 @@ void MainWindow::digit_pressed()
  QPushButton * button =(QPushButton*)sender();
  double labelNumber;
  QString newLabel;
- if(ui->pushButton_bolu->isChecked()||ui->pushButton_carpi->isChecked()||ui->pushButton_eksi->isChecked()||
-         ui->pushButton_plus->isChecked())
+ if((bolme||carpi||eksi||arti)&&!(userIsTyping))
  {
      labelNumber=button->text().toDouble();
+     userIsTyping=true;
+     newLabel=QString::number(labelNumber,'g',15);
  }
  else
  {
-     labelNumber=(ui->label->text()+button->text()).toDouble();
+     if(ui->label->text().contains('.')&&button->text()=="0")
+     {
+         newLabel=ui->label->text()+button->text();
+     }
+     else {
+         labelNumber=(ui->label->text()+button->text()).toDouble();
+
+         newLabel=QString::number(labelNumber,'g',15);
+     }
+
  }
 
- newLabel=QString::number(labelNumber,'g',15);
+
  ui->label->setText(newLabel);
 }
 
 
 void MainWindow::on_pushButton_nokta_released()
 {
-    if((ui->label->text()).toDouble()==(ui->label->text()).toInt())
+    if((ui->label->text()).toDouble()==(ui->label->text()).toInt() )
     {
     ui->label->setText(ui->label->text()+".");
     }
@@ -99,6 +110,10 @@ void MainWindow::on_pushButton_nokta_released()
      QPushButton * button =(QPushButton*)sender();
      firstNumber=(ui->label->text()).toDouble();
      button->setChecked(true);// hangi button basıldı bulundu ve true edildi
+     if(ui->pushButton_bolu->isChecked()) bolme=true;
+     if(ui->pushButton_carpi->isChecked()) carpi=true;
+     if(ui->pushButton_eksi->isChecked()) eksi=true;
+     if(ui->pushButton_plus->isChecked()) arti=true;
 
  }
 
@@ -106,39 +121,46 @@ void MainWindow::on_pushButton_nokta_released()
 void MainWindow::on_pushButton_equ_released()
 {
 
+
     double labelNumber, secondnumber;
     QString newLabel;
     secondnumber=ui->label->text().toDouble();
-    if(ui->pushButton_plus->isChecked())
+    if(arti)
     {
-    qDebug()<<"sdfmskdlfmsdf";
     labelNumber=firstNumber+secondnumber;
     newLabel=QString::number(labelNumber,'g',15);
     ui->label->setText(newLabel);
-    ui->pushButton_plus->setChecked(false);
+    arti=false;
     }
 
-    else if(ui->pushButton_eksi->isChecked())
+    else if(eksi)
     {
     labelNumber=firstNumber-secondnumber;
     newLabel=QString::number(labelNumber,'g',15);
     ui->label->setText(newLabel);
-    ui->pushButton_eksi->setChecked(false);
+    eksi=false;
     }
 
-    else if(ui->pushButton_carpi->isChecked())
+    else if(carpi)
     {
     labelNumber=firstNumber*secondnumber;
     newLabel=QString::number(labelNumber,'g',15);
     ui->label->setText(newLabel);
-    ui->pushButton_carpi->setChecked(false);
+    carpi=false;
     }
 
-    else if(ui->pushButton_bolu->isChecked())
+    else if(bolme)
     {
     labelNumber=firstNumber/secondnumber;
     newLabel=QString::number(labelNumber,'g',15);
     ui->label->setText(newLabel);
-    ui->pushButton_bolu->setChecked(false);
+    bolme=false;
     }
+    userIsTyping=false;
+}
+
+void MainWindow::on_pushButtonCl_released()
+{
+    arti=false,eksi=false,carpi=false,bolme=false,userIsTyping=false;
+    ui->label->setText("0");
 }

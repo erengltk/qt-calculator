@@ -22,6 +22,8 @@ private slots:
     void islem_operatoru();
     void on_pushButton_equ_released();
 
+    void on_pushButtonCl_released();
+
 private:
     Ui::MainWindow *ui;
 };
